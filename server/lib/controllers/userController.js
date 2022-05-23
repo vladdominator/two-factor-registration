@@ -11,12 +11,15 @@ const tokenVerification = require('../authentication/tokenVerification');
 
 userController.register = function (req, reply) {
   if (isValidUserRequest(req)) {
-    const hashedPassword = hashPassword(req.body.password);
-    db.addUser(req.body.email, hashedPassword);
-    const user = { email: req.body.email };
-    user.token = jwt.sign(user, config.jwt.secret);
-    delete user.password;
-    reply.code(200).send(user);
+    let userVerify = db.getCleanedUser(req.body.email);
+    if (typeof userVerify === 'undefined') {
+      const hashedPassword = hashPassword(req.body.password);
+      db.addUser(req.body.email, hashedPassword);
+      const user = { email: req.body.email };
+      user.token = jwt.sign(user, config.jwt.secret);
+      delete user.password;
+      reply.code(200).send(user);
+    }
   }
   reply.badRequest();
 };

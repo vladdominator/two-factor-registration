@@ -27,6 +27,7 @@ export default createStore({
     },
     CLEAR_USER_DATA() {
       localStorage.removeItem('user');
+      localStorage.removeItem('twofactorvalidated');
     },
     SET_TWOFACTOR_DATA(state, twoFactorData) {
       state.twofactor = twoFactorData;
@@ -74,6 +75,10 @@ export default createStore({
         .post('/user/validatetoken', credentials)
         .then(({ data }) => {
           commit('SET_TWOFACTOR_LOGIN', data.validated);
+          localStorage.setItem(
+            'twofactorvalidated',
+            JSON.stringify(data.validated ? true : '')
+          );
         });
     },
     getCustomers({ commit }) {

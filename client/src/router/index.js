@@ -4,6 +4,7 @@ import Dashboard from '../views/Dashboard.vue';
 import RegisterUser from '../views/RegisterUser.vue';
 import LoginUser from '../views/LoginUser.vue';
 import TwoFactorRegistration from '../views/TwoFactorRegistration.vue';
+import store from '../store/index.js';
 
 const routes = [
   {
@@ -15,7 +16,7 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: Dashboard,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresQR: true },
   },
   {
     path: '/register',
@@ -41,8 +42,16 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('user');
+  const twofactorvalidated = localStorage.getItem('twofactorvalidated');
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
     next('/');
+  }
+  if (
+    to.matched.some((record) => record.meta.requiresQR) &&
+    !twofactorvalidated &&
+    store.state.twofactorenabled
+  ) {
+    next('/login');
   }
   next();
 });

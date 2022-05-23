@@ -17,6 +17,12 @@
 
 <script>
 export default {
+  mounted() {
+    const loggedIn = localStorage.getItem('user');
+    if (loggedIn) {
+      this.$router.push({ name: 'dashboard' });
+    }
+  },
   data() {
     return {
       email: '',

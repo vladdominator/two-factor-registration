@@ -23,6 +23,16 @@
 
 <script>
 export default {
+  mounted() {
+    const loggedIn = localStorage.getItem('user');
+    const twofactorvalidated = localStorage.getItem('twofactorvalidated');
+    if (
+      loggedIn &&
+      (this.$store.state.twofactorenabled || !twofactorvalidated)
+    ) {
+      this.$router.push({ name: 'dashboard' });
+    }
+  },
   data() {
     return {
       title: 'Login',
@@ -30,7 +40,9 @@ export default {
       password: '',
       error: '',
       token: '',
-      showTwoFactorPanel: false,
+      showTwoFactorPanel:
+        localStorage.getItem('user') &&
+        !localStorage.getItem('twofactorvalidated'),
     };
   },
   methods: {
